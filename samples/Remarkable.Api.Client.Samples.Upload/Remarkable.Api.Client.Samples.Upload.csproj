@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Remarkable.Api.Client.Samples.Upload</RootNamespace>
+    <AssemblyName>rmupload</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Remarkable.Api.Client\Remarkable.Api.Client.csproj" />
+  </ItemGroup>
+
+</Project>

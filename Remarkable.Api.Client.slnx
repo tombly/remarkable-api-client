@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Remarkable.Api.Client.Samples.Pair/Remarkable.Api.Client.Samples.Pair.csproj" />
+    <Project Path="samples/Remarkable.Api.Client.Samples.Upload/Remarkable.Api.Client.Samples.Upload.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Remarkable.Api.Client/Remarkable.Api.Client.csproj" />
+  </Folder>
+</Solution>

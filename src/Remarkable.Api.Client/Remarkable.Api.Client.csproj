@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Remarkable.Api.Client</RootNamespace>
+    <AssemblyName>Remarkable.Api.Client</AssemblyName>
+
+    <IsPackable>true</IsPackable>
+    <PackageId>Remarkable.Api.Client</PackageId>
+    <Title>reMarkable .NET API Client</Title>
+    <Version>0.2.0</Version>
+    <Description>A .NET client for the reMarkable cloud. Supports device pairing and PDF upload.</Description>
+    <PackageTags>remarkable;cloud;pdf;upload;api</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
