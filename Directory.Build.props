@@ -23,7 +23,6 @@
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-  </ItemGroup>
+  <!-- SourceLink comes with the .NET SDK (8 and later); the old explicit 8.0.0 package pulled in
+       Microsoft.Build.Tasks.Git 8.0.0 (GHSA-23fw-v26w-5fgq), which TreatWarningsAsErrors fails on. -->
 </Project>
