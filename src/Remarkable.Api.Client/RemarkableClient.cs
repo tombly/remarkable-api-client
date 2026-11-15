@@ -7,12 +7,12 @@ using System.Text.Json.Serialization;
 namespace Remarkable.Api.Client;
 
 /// <summary>
-/// Client for the reMarkable cloud. Exposes the three operations needed to pair a device
-/// and upload a PDF:
+/// Client for the reMarkable cloud. Exposes the operations needed to pair a device and
+/// upload a PDF or an EPUB:
 /// <list type="number">
 ///   <item><see cref="PairDeviceAsync"/> — exchange a one-time code for a long-lived device token.</item>
 ///   <item><see cref="RefreshSessionAsync"/> — exchange a device token for a short-lived session token.</item>
-///   <item><see cref="UploadPdfAsync"/> — upload a PDF to the user's library root with a chosen display name.</item>
+///   <item><see cref="UploadPdfAsync"/> or <see cref="UploadEpubAsync"/> — upload a document to the user's library root with a chosen display name.</item>
 /// </list>
 /// The client is stateless with respect to tokens: each method takes the token it needs as an
 /// argument, leaving persistence and refresh policy to the caller.
@@ -110,21 +110,45 @@ public sealed class RemarkableClient
     /// <param name="visibleName">The name shown on the device.</param>
     /// <param name="pdfContent">A readable stream containing the PDF bytes.</param>
     /// <returns>The server-assigned document id and content hash.</returns>
-    public async Task<UploadResult> UploadPdfAsync(
+    public Task<UploadResult> UploadPdfAsync(
         string sessionToken,
         string visibleName,
         Stream pdfContent,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        UploadAsync(sessionToken, visibleName, pdfContent, "application/pdf", "PDF upload failed.", cancellationToken);
+
+    /// <summary>
+    /// Upload an EPUB to the user's library root. The tablet reflows it, so the reader's text
+    /// size and margins apply, unlike a PDF's fixed pages. Otherwise as <see cref="UploadPdfAsync"/>.
+    /// </summary>
+    /// <param name="sessionToken">A session token from <see cref="RefreshSessionAsync"/>.</param>
+    /// <param name="visibleName">The name shown on the device.</param>
+    /// <param name="epubContent">A readable stream containing the EPUB (a zip whose first entry is the stored <c>mimetype</c> file).</param>
+    /// <returns>The server-assigned document id and content hash.</returns>
+    public Task<UploadResult> UploadEpubAsync(
+        string sessionToken,
+        string visibleName,
+        Stream epubContent,
+        CancellationToken cancellationToken = default) =>
+        UploadAsync(sessionToken, visibleName, epubContent, "application/epub+zip", "EPUB upload failed.", cancellationToken);
+
+    private async Task<UploadResult> UploadAsync(
+        string sessionToken,
+        string visibleName,
+        Stream fileContent,
+        string contentType,
+        string failureMessage,
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(sessionToken);
         ArgumentException.ThrowIfNullOrEmpty(visibleName);
-        ArgumentNullException.ThrowIfNull(pdfContent);
+        ArgumentNullException.ThrowIfNull(fileContent);
 
         var metaJson = JsonSerializer.Serialize(new FileMeta(visibleName));
         var rmMeta = Convert.ToBase64String(Encoding.UTF8.GetBytes(metaJson));
 
-        var content = new StreamContent(pdfContent);
-        content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+        var content = new StreamContent(fileContent);
+        content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
         using var request = new HttpRequestMessage(
             HttpMethod.Post,
@@ -137,7 +161,7 @@ public sealed class RemarkableClient
         request.Headers.TryAddWithoutValidation("rm-source", RmSourceHeader);
 
         using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-        await EnsureSuccessAsync(response, "PDF upload failed.", cancellationToken).ConfigureAwait(false);
+        await EnsureSuccessAsync(response, failureMessage, cancellationToken).ConfigureAwait(false);
 
         var result = await response.Content
             .ReadFromJsonAsync<UploadResult>(cancellationToken)

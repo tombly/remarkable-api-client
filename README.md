@@ -1,11 +1,12 @@
 # Remarkable.Api.Client
 
 A small .NET client for the [reMarkable](https://remarkable.com) cloud. Covers
-the three operations needed to pair a device and upload a PDF:
+the operations needed to pair a device and upload a PDF or an EPUB:
 
 1. Exchange a one-time pairing code for a long-lived **device token**.
 2. Exchange that device token for a short-lived **session token**.
-3. Upload a PDF to the user's library root with a chosen display name.
+3. Upload a PDF or an EPUB to the user's library root with a chosen display name.
+   The tablet reflows an EPUB, so the reader's text size and margins apply.
 
 The client is stateless with respect to tokens — each method takes the token it
 needs as an argument, leaving persistence and refresh policy to the caller.
@@ -43,6 +44,10 @@ await using var pdf = File.OpenRead("paper.pdf");
 var result = await client.UploadPdfAsync(sessionToken, "Interesting paper", pdf);
 
 Console.WriteLine($"Uploaded {result.DocumentId}");
+
+// Or an EPUB, which the tablet reflows.
+await using var epub = File.OpenRead("article.epub");
+await client.UploadEpubAsync(sessionToken, "Interesting article", epub);
 ```
 
 Errors from the cloud surface as `RemarkableApiException` with the HTTP status

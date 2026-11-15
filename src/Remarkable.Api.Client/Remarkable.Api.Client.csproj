@@ -7,9 +7,9 @@
     <IsPackable>true</IsPackable>
     <PackageId>Remarkable.Api.Client</PackageId>
     <Title>reMarkable .NET API Client</Title>
-    <Version>0.2.0</Version>
-    <Description>A .NET client for the reMarkable cloud. Supports device pairing and PDF upload.</Description>
-    <PackageTags>remarkable;cloud;pdf;upload;api</PackageTags>
+    <Version>0.3.0</Version>
+    <Description>A .NET client for the reMarkable cloud. Supports device pairing and PDF and EPUB upload.</Description>
+    <PackageTags>remarkable;cloud;pdf;epub;upload;api</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
